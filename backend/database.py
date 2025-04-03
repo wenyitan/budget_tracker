@@ -1,9 +1,14 @@
 import sqlite3
 from models import Transaction
 
+def dict_factory(cursor, row):
+    fields = [column[0] for column in cursor.description]
+    return {key: value for key, value in zip(fields, row) if key != "id"}
+
 class Database:
     def __init__(self, db_path="budget_tracker.db"):
         self.conn = sqlite3.connect(db_path, check_same_thread=False)
+        self.conn.row_factory = dict_factory
         self.cursor = self.conn.cursor()
 
     def execute(self, query, values=None):

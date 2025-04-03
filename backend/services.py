@@ -8,6 +8,8 @@ class BudgetManager:
     def log_transaction(self, transaction: Transaction):
         query = "insert into transactions (category, description, amount, person, date) values(:category, :description, :amount, :person, :date)"
         self.db.execute(query=query, values=transaction.to_dict())
+        return {"logged_transaction": transaction.to_dict()}
 
     def get_all_transactions(self):
-        return self.db.fetch_all("select * from transactions")
+        results = self.db.fetch_all("select * from transactions")
+        return results
