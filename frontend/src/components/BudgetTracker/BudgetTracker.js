@@ -1,12 +1,13 @@
 import TrancsactionTable from "./TransactionTable/TransactionTable";
+import "./BudgetTracker.css"
 
 function BudgetTracker() {
     return (
-        <div>
+        <div className="col-container">
             <h1>Budget Tracker</h1>
             <div className="container">
                 <TrancsactionTable/>
-                <TrancsactionTable/>
+                {/* <TrancsactionTable/> */}
             </div>
         </div>
     )
