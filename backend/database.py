@@ -13,8 +13,12 @@ class Database:
 
     def execute(self, query, values=None):
         """Executes an SQL query (INSERT/UPDATE/DELETE)."""
-        self.cursor.execute(query, values or ())
+        executed = self.cursor.execute(query, values or ())
         self.conn.commit()
+        return {
+            "affected_rows": executed.rowcount,
+            "last_row_id": executed.lastrowid
+            }
 
     def fetch_all(self, query, values=None):
         """Fetches all results from a SELECT query."""

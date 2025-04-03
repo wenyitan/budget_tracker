@@ -18,5 +18,9 @@ def log_transaction():
     transaction = Transaction.from_dict(request.get_json())
     return bm.log_transaction(transaction)
 
+@app.delete('/transaction/<int:id>')
+def delete_transaction_by_id(id):
+    return bm.delete_transaction_by_id(id)
+
 if __name__ == "__main__":
-    app.run(debug=False, host="0.0.0.0")
+    app.run(debug=True, host="0.0.0.0")
