@@ -3,7 +3,7 @@ from models import Transaction
 
 def dict_factory(cursor, row):
     fields = [column[0] for column in cursor.description]
-    return {key: value for key, value in zip(fields, row) if key != "id"}
+    return {key: value for key, value in zip(fields, row)}
 
 class Database:
     def __init__(self, db_path="budget_tracker.db"):
