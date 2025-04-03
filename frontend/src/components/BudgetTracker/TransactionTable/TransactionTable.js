@@ -6,7 +6,7 @@ function TrancsactionTable() {
     const [ transactions, setTransactions ] = useState([]);
 
     const fetchTransactions = ()=> {
-        axios.get("http://localhost:5000/transactions")
+        axios.get("http://127.0.0.1:5000/transactions")
             .then((res) => {
                 setTransactions(res.data);
             }).catch((err) => {
@@ -20,26 +20,30 @@ function TrancsactionTable() {
 
     return (
         <table>
-            <tr>
-                <th>No.</th>
-                <th>Date</th>
-                <th>Amount</th>
-                <th>Category</th>
-                <th>Description</th>
-                <th>Person</th>
-            </tr>
-            {transactions.map((transaction, key)=> {
-                return (
-                    <tr>
-                        <th>{key}</th>
-                        <th>{transaction.date}</th>
-                        <th>{transaction.amount}</th>
-                        <th>{transaction.category}</th>
-                        <th>{transaction.description}</th>
-                        <th>{transaction.person}</th>
-                    </tr>
-                )
-            })}
+            <thead>
+                <tr>
+                    <th>No.</th>
+                    <th>Date</th>
+                    <th>Amount</th>
+                    <th>Category</th>
+                    <th>Description</th>
+                    <th>Person</th>
+                </tr>
+            </thead>
+            <tbody>
+                {transactions.map((transaction, key)=> {
+                    return (
+                        <tr>
+                            <th>{key}</th>
+                            <th>{transaction.date}</th>
+                            <th>{transaction.amount}</th>
+                            <th>{transaction.category}</th>
+                            <th>{transaction.description}</th>
+                            <th>{transaction.person}</th>
+                        </tr>
+                    )
+                })}
+            </tbody>
 
         </table>
     )
