@@ -19,6 +19,7 @@ jobs:
 
     - name: Create virtual environment
       run: |
+        cd backend/
         python -m venv venv
         source venv/bin/activate
         pip install --upgrade pip
@@ -26,5 +27,6 @@ jobs:
 
     - name: Run tests
       run: |
+        cd backend/
         source venv/bin/activate
         pytest services_test.py -vv
