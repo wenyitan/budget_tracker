@@ -4,7 +4,7 @@ class Transaction:
         self.category = category
         self.description = description
         self.person = person
-        self.date = date
+        self.date = date # YYYY-MM-DD
 
     def to_dict(self):
         return {

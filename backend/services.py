@@ -13,7 +13,7 @@ class BudgetManager:
         return {"logged_transaction": logged_transaction}
 
     def get_transaction_by_id(self, id):
-        return self.db.fetch_all("select * from transactions where id=?", (id,))
+        return self.db.fetch_all("select * from transactions where id=?", (id,))[0]
 
     def get_all_transactions(self):
         return self.db.fetch_all("select * from transactions")
