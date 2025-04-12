@@ -2,6 +2,8 @@ name: Python Backend CI (Manual Trigger)
 
 on:
   workflow_dispatch:  # Manual trigger only
+  push:
+    branches: [main]
 
 jobs:
   build:
