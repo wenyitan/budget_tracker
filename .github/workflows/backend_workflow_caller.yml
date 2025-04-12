@@ -24,6 +24,11 @@ jobs:
         source venv/bin/activate
         pip install --upgrade pip
         pip install -r requirements.txt
+    
+    - name: Set up SQLite db
+      run: |
+        cd backend/
+        python create_table.py
 
     - name: Run tests
       run: |
