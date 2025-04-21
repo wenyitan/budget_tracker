@@ -1,5 +1,0 @@
-pytest
-telebot
-pyTelegramBotAPI
-flask
-aiohttp
