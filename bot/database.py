@@ -33,6 +33,7 @@ class Database:
             amount REAL NOT NULL,
             person TEXT NOT NULL,
             date TEXT NOT NULL, 
+            category TEXT NOT NULL,
             description TEXT default '',
             shared INTEGER default 1
             );
