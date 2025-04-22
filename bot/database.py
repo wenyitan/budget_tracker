@@ -6,7 +6,7 @@ def dict_factory(cursor, row):
     return {key: value for key, value in zip(fields, row)}
 
 class Database:
-    def __init__(self, db_path="/app/bot/transactions.db"):
+    def __init__(self, db_path="bot.db"):
         self.conn = sqlite3.connect(db_path, check_same_thread=False)
         self.conn.row_factory = dict_factory
         self.cursor = self.conn.cursor()
@@ -27,5 +27,5 @@ class Database:
         self.conn.close()
 
     def init_db(self):
-        for query in create_table_queries:          
+        for query in create_table_queries:     
             self.cursor.execute(query)
