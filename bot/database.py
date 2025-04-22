@@ -1,5 +1,5 @@
 import sqlite3
-from config import TABLE_NAME
+from database_schema import create_table_queries
 
 def dict_factory(cursor, row):
     fields = [column[0] for column in cursor.description]
@@ -27,15 +27,5 @@ class Database:
         self.conn.close()
 
     def init_db(self):
-        create_table_query = f"""
-            CREATE TABLE IF NOT EXISTS {TABLE_NAME} (
-            id INTEGER PRIMARY KEY AUTO INCREMENT,
-            amount REAL NOT NULL,
-            person TEXT NOT NULL,
-            date TEXT NOT NULL, 
-            category TEXT NOT NULL,
-            description TEXT default '',
-            shared INTEGER default 1
-            );
-        """                              # date stored as 'DD-MMM-YYYY' for example '12-Apr-2025', shared is boolean where 1 is true and 0 is false
-        self.cursor.execute(create_table_query)
+        for query in create_table_queries:          
+            self.cursor.execute(query)
