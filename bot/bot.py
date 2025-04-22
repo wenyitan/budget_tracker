@@ -6,8 +6,12 @@ import datetime
 from config import BOT_TOKEN, ALLOWED_USERS, DATE_FORMAT
 from utils import months_day_map
 from transaction import Transaction
+from database import Database
+from budget_manager import BudgetManager
 
 bot = telebot.TeleBot(BOT_TOKEN)
+db = Database()
+bm = BudgetManager(db)
 
 @bot.message_handler(commands=['start'])
 def start(message):
@@ -22,9 +26,10 @@ def start(message):
 def log(message):
     from_user = message.from_user
     chat = message.chat
-    text = "How much was spent?"
     if from_user.id in ALLOWED_USERS:
-        sent_message = bot.send_message(chat.id, text=text)
+        text = "How much was spent?"
+        markup = types.ReplyKeyboardRemove()
+        sent_message = bot.send_message(chat.id, text=text, reply_markup=markup)
         bot.register_next_step_handler(sent_message, register_amount_prompt_person)
     else:
         print("NOT AUTHORISED")
@@ -36,8 +41,7 @@ def register_amount_prompt_person(message):
         transaction = Transaction(amount=amount)
         text = f"Ok, ${amount} was spent. Who spent it? Wens or Tians?"
         markup = types.ReplyKeyboardMarkup(one_time_keyboard=True)
-        markup.add("Wens")
-        markup.add("Tians")
+        markup.add("Tians", "Wens", row_width=2)
         sent_message = bot.send_message(chat.id, text=text, reply_markup=markup)
         bot.register_next_step_handler(message=sent_message, callback=register_person_prompt_shared, transaction=transaction)
     except ValueError:
@@ -54,9 +58,8 @@ def register_person_prompt_shared(message, **kwargs):
         transaction = kwargs['transaction']
         transaction.person = person
         markup = types.ReplyKeyboardMarkup(one_time_keyboard=True)
-        markup.add("Yes")
-        markup.add("No")
-        text = f"OK. Is it a shared transaction"
+        markup.add("Yes", "No", row_width=2)
+        text = f"OK. Is it a shared transaction?"
         sent_message = bot.send_message(chat.id, text=text, reply_markup=markup)
         bot.register_next_step_handler(message=sent_message, callback=handle_shared_yes_no_prompt_category, transaction=transaction)
 
@@ -90,8 +93,6 @@ def handle_day_prompt_month(message, **kwargs):
     transaction = kwargs['transaction']
     markup = types.ReplyKeyboardMarkup(one_time_keyboard=True)
     markup.add(*months_day_map.keys(), row_width=3)
-    # for month in months_day_map.keys():
-    #     markup.add(month)
     text = "Which month was it?"
     sent_message = bot.send_message(chat.id, text=text, reply_markup=markup)
     bot.register_next_step_handler(message=sent_message, callback=handle_month_prompt_year, transaction=transaction, day=day)
@@ -124,10 +125,17 @@ def handle_comments_prompt_consolidate(message, **kwargs):
     transaction = kwargs['transaction']
     if answer != "No comments!":
         transaction.description = answer
-    text = f"Ok. Please check your transaction: {transaction.__dict__}"
+    text = f"""Ok. Please check your transaction:
+        Amount: ${transaction.amount}
+        Person: {transaction.person}
+        Category: {bm.get_category_by_id(transaction.category_id)["category"]}
+        Date: {transaction.date}
+        Description: {transaction.description}
+        Shared: {"Yes" if transaction.shared else "No"}
+        """
     markup = types.ReplyKeyboardMarkup(one_time_keyboard=True)
     markup.add("Save!", "Abort!", row_width=2)
-    sent_message = bot.send_message(message.chat.id, text=text)
+    sent_message = bot.send_message(message.chat.id, text=text, reply_markup=markup)
     bot.register_next_step_handler(message=sent_message, callback=handle_save_or_abort, transaction=transaction)
 
 def handle_save_or_abort(message, **kwargs):
@@ -135,6 +143,7 @@ def handle_save_or_abort(message, **kwargs):
     choice = message.text
     if choice == "Save!":
         text = "Ok saving transaction..."
+        bm.save_transaction(transaction)
     else:
         text ="Ok aborting..."
     markup = types.ReplyKeyboardRemove()
@@ -145,20 +154,24 @@ def handle_shared_yes_no_prompt_category(message, **kwargs):
     transaction = kwargs['transaction']
     transaction.shared = answer == "yes"
     text = "Sure! Which category does this expense belong to?"
-    category_placeholder = ["Food", "Baby", "Groceries", "Add new category"]
+    categories = bm.get_all_categories()
     markup = types.ReplyKeyboardMarkup(one_time_keyboard=True)
-    markup.add(*category_placeholder, row_width=2)
+    markup.add(*[category['category'] for category in categories], row_width=2)
+    markup.add("Add new category")
     sent_message = bot.send_message(message.chat.id, text=text, reply_markup=markup)
-    bot.register_next_step_handler(message=sent_message, callback=handle_category_response_prompt_date, transaction=transaction, categories=category_placeholder)
+    bot.register_next_step_handler(message=sent_message, callback=handle_category_response_prompt_date, transaction=transaction, categories=categories)
 
 def handle_category_response_prompt_date(message, **kwargs):
     answer = message.text
     transaction = kwargs['transaction']
     categories = kwargs['categories']
     if answer == "Add new category":
-        pass
+        text = f"Ok, what is the new category?"
+        markup = types.ReplyKeyboardRemove()
+        sent_message = bot.send_message(message.chat.id, text=text, reply_markup=markup)
+        bot.register_next_step_handler(message=sent_message, callback=handle_add_new_category_prompt_date, transaction=transaction, categories=categories)
     else:
-        transaction.category_id = answer
+        transaction.category_id = bm.get_id_by_category(answer)['id']
         print(transaction.__dict__)
         text = "Roger that! Was it spent today?"
         markup = types.ReplyKeyboardMarkup(one_time_keyboard=True)
@@ -166,6 +179,22 @@ def handle_category_response_prompt_date(message, **kwargs):
         sent_message = bot.send_message(message.chat.id, text=text, reply_markup=markup)
         bot.register_next_step_handler(message=sent_message, callback=handle_today_yes_no, transaction=transaction)
 
+def handle_add_new_category_prompt_date(message, **kwargs):
+    new_category = message.text
+    transaction = kwargs['transaction']
+    categories = kwargs['categories']
+    categories_list = [category['category'] for category in kwargs['categories']]
+    if new_category in categories_list:
+        text = "This category already exists la. What you trying to do? Please enter a new category."
+        sent_message = bot.send_message(message.chat.id, text=text)
+        bot.register_next_step_handler(message=sent_message, callback=handle_add_new_category_prompt_date, transaction=transaction, categories=categories)
+    else:
+        transaction.category_id = bm.add_new_category(new_category)
+        text = f"Done! I have also added '{new_category}' to the list of categories that can be chosen.\nDid the transaction happen today?"
+        markup = types.ReplyKeyboardMarkup(one_time_keyboard=True)
+        markup.add("Yes", "No", row_width=2)
+        sent_message = bot.send_message(message.chat.id, text=text, reply_markup=markup)
+        bot.register_next_step_handler(message=sent_message, callback=handle_today_yes_no, transaction=transaction)
 
 if __name__ == "__main__":
     print("starting bot")

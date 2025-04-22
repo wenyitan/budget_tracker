@@ -7,3 +7,6 @@ class Transaction():
         self.description = description
         self.shared = shared
         self.category_id = category_id
+
+    def get_query_placeholder(self):
+        return [tup[1] for tup in self.__dict__.items() if tup[0] != 'id']
