@@ -8,6 +8,7 @@ from utils import months_day_map
 from transaction import Transaction
 from database import Database
 from budget_manager import BudgetManager
+from logging_config import logger
 
 bot = telebot.TeleBot(BOT_TOKEN)
 db = Database()
@@ -26,6 +27,7 @@ def start(message):
 def log(message):
     from_user = message.from_user
     chat = message.chat
+    logger.info(f"bot_logger: /start called by {from_user.first_name}")
     if from_user.id in ALLOWED_USERS:
         text = "How much was spent?"
         markup = types.ReplyKeyboardRemove()
@@ -167,8 +169,7 @@ def handle_category_response_prompt_date(message, **kwargs):
     categories = kwargs['categories']
     if answer == "Add new category":
         text = f"Ok, what is the new category?"
-        markup = types.ReplyKeyboardRemove()
-        sent_message = bot.send_message(message.chat.id, text=text, reply_markup=markup)
+        sent_message = bot.send_message(message.chat.id, text=text)
         bot.register_next_step_handler(message=sent_message, callback=handle_add_new_category_prompt_date, transaction=transaction, categories=categories)
     else:
         transaction.category_id = bm.get_id_by_category(answer)['id']
@@ -197,5 +198,5 @@ def handle_add_new_category_prompt_date(message, **kwargs):
         bot.register_next_step_handler(message=sent_message, callback=handle_today_yes_no, transaction=transaction)
 
 if __name__ == "__main__":
-    print("starting bot")
+    logger.info("Starting bot.")
     bot.infinity_polling()
