@@ -40,7 +40,8 @@ if docker ps --filter "name=$CONTAINER_NAME" --filter "status=running" | grep "$
     esac
 else
     echo "🚀 Container '$CONTAINER_NAME' is not running. Starting it..."
-    docker run --rm -it \
+    cd $HOME/apps/budget_tracker
+    docker run --rm \
         --name budget_tracker \
         -v "$PWD":/app \
         -w /app \
