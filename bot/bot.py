@@ -1,7 +1,5 @@
 import telebot
 from telebot import types
-from telegram_bot_calendar import DetailedTelegramCalendar, WMonthTelegramCalendar, LSTEP
-from telebot.util import quick_markup
 import datetime
 from config import BOT_TOKEN, ALLOWED_USERS, DATE_FORMAT
 from utils import months_day_map
@@ -9,10 +7,18 @@ from transaction import Transaction
 from database import Database
 from budget_manager import BudgetManager
 from logging_config import logger
+import message_formatter
 
 bot = telebot.TeleBot(BOT_TOKEN)
 db = Database()
 bm = BudgetManager(db)
+
+bot.set_my_commands([
+    types.BotCommand("/start", "To receive starting instructions"),
+    types.BotCommand("/log", "To start logging transactions"),
+    types.BotCommand("/list_months_transactions", "To list the transactions of the month"),
+    types.BotCommand("/breakdown_by_month", "To get a breakdown of money spent on each category")
+])
 
 @bot.message_handler(commands=['start'])
 def start(message):
@@ -173,7 +179,6 @@ def handle_category_response_prompt_date(message, **kwargs):
         bot.register_next_step_handler(message=sent_message, callback=handle_add_new_category_prompt_date, transaction=transaction, categories=categories)
     else:
         transaction.category_id = bm.get_id_by_category(answer)['id']
-        print(transaction.__dict__)
         text = "Roger that! Was it spent today?"
         markup = types.ReplyKeyboardMarkup(one_time_keyboard=True)
         markup.add("Yes", "No", row_width=2)
@@ -196,6 +201,18 @@ def handle_add_new_category_prompt_date(message, **kwargs):
         markup.add("Yes", "No", row_width=2)
         sent_message = bot.send_message(message.chat.id, text=text, reply_markup=markup)
         bot.register_next_step_handler(message=sent_message, callback=handle_today_yes_no, transaction=transaction)
+
+@bot.message_handler(commands=['list_months_transactions'])
+def list_transactions_for_month(message):
+    transactions = bm.get_current_months_transactions()
+    # print(generate_message_table(transactions))
+
+@bot.message_handler(commands=['breakdown_by_month'])
+def get_breakdown_of_month(message):
+    breakdown = bm.get_current_months_breakdown()
+    text = "Ok. Here is the breakdown for the current month:\n"
+    text += message_formatter.format_breakdown_message(breakdown)
+    bot.send_message(message.chat.id, text=text, parse_mode="Markdown")
 
 if __name__ == "__main__":
     logger.info("Starting bot.")

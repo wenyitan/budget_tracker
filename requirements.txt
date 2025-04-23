@@ -1,3 +1,2 @@
 telebot
 aiohttp
-python-telegram-bot-calendar

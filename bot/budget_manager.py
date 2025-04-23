@@ -1,6 +1,9 @@
 from database import Database
 from transaction import Transaction
 from logging_config import logger
+import datetime
+from config import DATE_FORMAT
+from utils import months_day_map
 
 class BudgetManager():
     def __init__(self, database: Database):
@@ -36,5 +39,25 @@ class BudgetManager():
         query = "select * from transactions where id=?"
         return self.db.fetch_one(query, (id,))
 
+    def get_current_months_transactions(self):
+        now = datetime.datetime.now()
+        month_year_date_format = '-'.join(DATE_FORMAT.split("-")[1:]) 
+        now_string = now.strftime(month_year_date_format)
+        query = f"select t.id, t.amount, t.person, t.date, t.description, t.shared, c.category from transactions as t left join categories as c on t.category_id = c.id where t.date like '%{now_string}' order by t.date"
+        return self.db.fetch_all(query)
+    
+    def get_breakdown_by_month_and_year(self, month, year):
+        if month not in months_day_map.keys():
+            return None
+        else:
+            date_string = f"%{month}-{str(year)}"
+            query = "select sum(t.amount) as amount, c.category from transactions as t left join categories as c on t.category_id = c.id where t.date like ? group by c.category;"
+            return self.db.fetch_all(query, (date_string,))
+        
+    def get_current_months_breakdown(self):
+        now = datetime.datetime.now()
+        month_year_date_format = '-'.join(DATE_FORMAT.split("-")[1:]) 
+        now_string = now.strftime(month_year_date_format).split("-")
+        return self.get_breakdown_by_month_and_year(now_string[0], now_string[1])
 
 ### "select t.id, t.amount, t.person, t.date, t.description, t.shared, c.category from transactions as t left join categories as c on t.category_id = c.id"
