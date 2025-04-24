@@ -1,7 +1,5 @@
-from bot.config import TABLE_NAME
-
 create_transaction_table_query = f"""
-    CREATE TABLE IF NOT EXISTS {TABLE_NAME} (
+    CREATE TABLE IF NOT EXISTS transactions (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         amount REAL NOT NULL,
         person TEXT NOT NULL,
