@@ -4,6 +4,7 @@ from bot.logging_config import logger
 try:
     from bot.config import DATE_FORMAT
 except ModuleNotFoundError:
+    import os
     DATE_FORMAT = os.getenv("DATE_FORMAT")
 from bot.utils import months_day_map
 import datetime

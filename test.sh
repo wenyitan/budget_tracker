@@ -1,4 +1,3 @@
-cd $HOME/apps/budget_tracker
 docker run --rm \
     --name budget_tracker_test \
     -v "$PWD":/app \
