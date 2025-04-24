@@ -6,8 +6,8 @@ from bot.utils import months_day_map
 import datetime
 
 class BudgetManager():
-    def __init__(self, database: Database):
-        self.db = database
+    def __init__(self):
+        self.db = Database()
 
     def get_all_categories(self):
         query = f"select * from categories;"

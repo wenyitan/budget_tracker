@@ -4,14 +4,12 @@ import datetime
 from bot.config import BOT_TOKEN, ALLOWED_USERS, DATE_FORMAT
 from bot.utils import months_day_map
 from bot.transaction import Transaction
-from bot.database import Database
 from bot.budget_manager import BudgetManager
 from bot.logging_config import logger
 import bot.message_formatter as message_formatter
 
 bot = telebot.TeleBot(BOT_TOKEN)
-db = Database()
-bm = BudgetManager(db)
+bm = BudgetManager()
 
 bot.set_my_commands([
     types.BotCommand("/start", "To receive starting instructions"),
