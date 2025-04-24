@@ -5,5 +5,6 @@ docker run --rm \
     -w /app \
     -e TZ=Asia/Singapore \
     -e PYTHONPATH=/app \
+    -e DATE_FORMAT=%d-%b-%Y \
     python:3.11 \
     bash -c "pip install --no-cache-dir -r requirements.txt && pytest -vvv"
