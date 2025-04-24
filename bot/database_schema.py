@@ -1,4 +1,4 @@
-from config import TABLE_NAME
+from bot.config import TABLE_NAME
 
 create_transaction_table_query = f"""
     CREATE TABLE IF NOT EXISTS {TABLE_NAME} (

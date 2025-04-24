@@ -1,13 +1,13 @@
 import telebot
 from telebot import types
 import datetime
-from config import BOT_TOKEN, ALLOWED_USERS, DATE_FORMAT
-from utils import months_day_map
-from transaction import Transaction
-from database import Database
-from budget_manager import BudgetManager
-from logging_config import logger
-import message_formatter
+from bot.config import BOT_TOKEN, ALLOWED_USERS, DATE_FORMAT
+from bot.utils import months_day_map
+from bot.transaction import Transaction
+from bot.database import Database
+from bot.budget_manager import BudgetManager
+from bot.logging_config import logger
+import bot.message_formatter as message_formatter
 
 bot = telebot.TeleBot(BOT_TOKEN)
 db = Database()

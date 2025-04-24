@@ -1,5 +1,5 @@
 import sqlite3
-from database_schema import create_table_queries
+from bot.database_schema import create_table_queries
 
 def dict_factory(cursor, row):
     fields = [column[0] for column in cursor.description]
