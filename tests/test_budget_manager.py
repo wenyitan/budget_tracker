@@ -6,17 +6,17 @@ bm = BudgetManager()
 context = {}
 
 def test_add_new_category_and_get_category_and_id():
-    print("Adding new category")
+    print("::group::Adding new category")
     inserted_id = bm.add_new_category("test_placeholder_category")
-    print("Asserting integer returned by add_new_category")
+    print("::notice::Asserting integer returned by add_new_category")
     assert type(inserted_id) == int
-    print("Retrieving added category using id")
+    print("::notice::Retrieving added category using id")
     retrieved_category = bm.get_category_by_id(inserted_id)
-    print("Asserting category returned is 'test_placeholder_category'")
+    print("::notice::Asserting category returned is 'test_placeholder_category'")
     assert retrieved_category['category'] == "test_placeholder_category"
-    print("Retrieving id of added category using category name")
+    print("::notice::Retrieving id of added category using category name")
     retrieved_id = bm.get_id_by_category("test_placeholder_category")
-    print(f"Asserting id returned is {inserted_id}")
+    print(f"::notice::Asserting id returned is {inserted_id}")
     assert retrieved_id['id'] == inserted_id
 
 def test_get_all_category():
