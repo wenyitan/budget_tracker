@@ -1,6 +1,7 @@
 #!/bin/bash
+ENVIRONMENT=${1:-dev}
 
-CONTAINER_NAME="budget_tracker_dev"
+CONTAINER_NAME="budget_tracker_$ENVIRONMENT"
 
 # Helper function to get the container ID
 get_container_id() {
@@ -46,7 +47,7 @@ else
         -v "$PWD":/app \
         -w /app \
         -e TZ=Asia/Singapore \
-        -e ENV=dev \
+        -e ENV=$ENVIRONMENT \
         python:3.11 \
         bash -c "pip install --no-cache-dir -r requirements.txt && python -m bot.bot"
 fi
