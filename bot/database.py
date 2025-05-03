@@ -29,6 +29,3 @@ class Database:
     def init_db(self):
         for query in create_table_queries:     
             self.cursor.execute(query)
-
-db = Database()
-db.init_db()
