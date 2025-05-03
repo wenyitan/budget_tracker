@@ -1,12 +1,17 @@
 import sqlite3
 from bot.database_schema import create_table_queries
+from bot.logging_config import logger
+from bot.config import env
 
 def dict_factory(cursor, row):
     fields = [column[0] for column in cursor.description]
     return {key: value for key, value in zip(fields, row)}
 
+db_path="bot.db" if env == "prod" else f"bot_{env}.db"
+logger.info(f"Database path: {db_path}")
+
 class Database:
-    def __init__(self, db_path="bot.db"):
+    def __init__(self, db_path=db_path):
         self.conn = sqlite3.connect(db_path, check_same_thread=False)
         self.conn.row_factory = dict_factory
         self.cursor = self.conn.cursor()
