@@ -1,6 +1,9 @@
 #!/bin/bash
 
-CONTAINER_NAME="budget_tracker"
+ENVIRONMENT=${1:-prod}
+
+CONTAINER_NAME="budget_tracker_$ENVIRONMENT"
+echo $CONTAINER_NAME
 
 # Helper function to get the container ID
 get_container_id() {
@@ -42,10 +45,11 @@ else
     echo "🚀 Container '$CONTAINER_NAME' is not running. Starting it..."
     cd $HOME/apps/budget_tracker
     docker run --rm -d \
-        --name budget_tracker \
+        --name $CONTAINER_NAME \
         -v "$PWD":/app \
         -w /app \
         -e TZ=Asia/Singapore \
+        -e ENV=$ENVIRONMENT \
         python:3.11 \
         bash -c "pip install --no-cache-dir -r requirements.txt && python -m bot.bot"
 fi
