@@ -10,6 +10,7 @@ class Database:
         self.conn = sqlite3.connect(db_path, check_same_thread=False)
         self.conn.row_factory = dict_factory
         self.cursor = self.conn.cursor()
+        self.init_db()
 
     def execute(self, query, values=None):
         self.cursor.execute(query, values or ())
