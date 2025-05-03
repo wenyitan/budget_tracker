@@ -8,6 +8,7 @@ except ModuleNotFoundError:
     DATE_FORMAT = os.getenv("DATE_FORMAT")
 from bot.utils import months_day_map
 import datetime
+from bot.config import ALLOWED_USERS
 
 class BudgetManager():
     def __init__(self):
@@ -54,19 +55,35 @@ class BudgetManager():
         query = f"select t.id, t.amount, t.person, t.date, t.description, t.shared, c.category from transactions as t left join categories as c on t.category_id = c.id where t.date like '%{now_string}' order by t.date"
         return self.db.fetch_all(query)
     
-    def get_breakdown_by_month_and_year(self, month, year):
-        if month not in months_day_map.keys():
-            return None
-        else:
-            date_string = f"%{month}-{str(year)}"
-            query = "select sum(t.amount) as amount, c.category from transactions as t left join categories as c on t.category_id = c.id where t.date like ? group by c.category;"
-            return self.db.fetch_all(query, (date_string,))
+    # def get_breakdown_by_month_and_year_and_id(self, month, year, id):
+    #     if month not in months_day_map.keys():
+    #         return None
+    #     else:
+    #         person = ALLOWED_USERS[id]
+    #         date_string = f"%{month}-{str(year)}"
+    #         query = "select sum(t.amount) as amount, c.category from transactions as t left join categories as c on t.category_id = c.id where t.date like ? and person = ? group by c.category;"
+    #         return self.db.fetch_all(query, (date_string, person))
         
-    def get_current_months_breakdown(self):
-        now = datetime.datetime.now()
-        month_year_date_format = '-'.join(DATE_FORMAT.split("-")[1:]) 
-        now_string = now.strftime(month_year_date_format).split("-")
-        return self.get_breakdown_by_month_and_year(now_string[0], now_string[1])
+    def get_current_months_breakdown_by_id(self, id):
+        person = ALLOWED_USERS[id]
+        results = {}
+        all_transactions = self.get_current_months_transactions()
+        all_transactions = [ transaction for transaction in all_transactions if transaction['person'] == person or transaction['shared'] ]
+        shared = 0
+        for transaction in all_transactions:
+            category = transaction['category']
+            amount = transaction['amount']
+            amount = amount/2 if transaction['shared'] else amount
+            if transaction['shared']:
+                shared += amount 
+            if category not in results.keys():
+                results[category] = amount
+            else:
+                results[category] += amount
+        results['Total'] = sum(results.values())
+        results['Shared'] = shared
+        return results
+
     
     def get_all_transactions(self):
         query = 'select * from transactions;'

@@ -45,7 +45,7 @@ def register_amount_prompt_person(message):
     try:
         amount = float(message.text)
         transaction = Transaction(amount=amount)
-        text = f"Ok, ${amount} was spent. Who spent it? Wens or Tians?"
+        text = f"Ok, ${amount:.2f} was spent. Who spent it? Wens or Tians?"
         markup = types.ReplyKeyboardMarkup(one_time_keyboard=True)
         markup.add("Tians", "Wens", row_width=2)
         sent_message = bot.send_message(chat.id, text=text, reply_markup=markup)
@@ -132,7 +132,7 @@ def handle_comments_prompt_consolidate(message, **kwargs):
     if answer != "No comments!":
         transaction.description = answer
     text = f"""Ok. Please check your transaction:
-        Amount: ${transaction.amount}
+        Amount: ${transaction.amount:.2f}
         Person: {transaction.person}
         Category: {bm.get_category_by_id(transaction.category_id)["category"]}
         Date: {transaction.date}
@@ -210,7 +210,7 @@ def get_breakdown_of_month(message):
     from_user = message.from_user
     id = from_user.id
     if id in ALLOWED_USERS.keys():
-        breakdown = bm.get_current_months_breakdown(id)
+        breakdown = bm.get_current_months_breakdown_by_id(id)
         text = "Ok. Here is the breakdown for the current month:\n"
         text += message_formatter.format_breakdown_message(breakdown)
         bot.send_message(message.chat.id, text=text, parse_mode="Markdown")
