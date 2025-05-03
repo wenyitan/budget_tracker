@@ -22,7 +22,7 @@ bot.set_my_commands([
 def start(message):
     from_user = message.from_user
     chat = message.chat
-    if from_user.id in ALLOWED_USERS:
+    if from_user.id in ALLOWED_USERS.keys():
         bot.send_message(chat.id, text=f"Hello {from_user.first_name}. Please use /log to log an expense. Other commands you can use are:")
     else:
         print("NOT AUTHORISED")
@@ -32,7 +32,7 @@ def log(message):
     from_user = message.from_user
     chat = message.chat
     logger.info(f"bot_logger: /start called by {from_user.first_name}")
-    if from_user.id in ALLOWED_USERS:
+    if from_user.id in ALLOWED_USERS.keys():
         text = "How much was spent?"
         markup = types.ReplyKeyboardRemove()
         sent_message = bot.send_message(chat.id, text=text, reply_markup=markup)
@@ -207,10 +207,15 @@ def list_transactions_for_month(message):
 
 @bot.message_handler(commands=['breakdown_by_month'])
 def get_breakdown_of_month(message):
-    breakdown = bm.get_current_months_breakdown()
-    text = "Ok. Here is the breakdown for the current month:\n"
-    text += message_formatter.format_breakdown_message(breakdown)
-    bot.send_message(message.chat.id, text=text, parse_mode="Markdown")
+    from_user = message.from_user
+    id = from_user.id
+    if id in ALLOWED_USERS.keys():
+        breakdown = bm.get_current_months_breakdown(id)
+        text = "Ok. Here is the breakdown for the current month:\n"
+        text += message_formatter.format_breakdown_message(breakdown)
+        bot.send_message(message.chat.id, text=text, parse_mode="Markdown")
+    else:
+        print("NOT AUTHORISED")
 
 if __name__ == "__main__":
     logger.info("Starting bot.")
