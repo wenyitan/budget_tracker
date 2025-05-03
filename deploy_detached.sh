@@ -42,12 +42,5 @@ if docker ps --filter "name=$CONTAINER_NAME" --filter "status=running" | grep "$
 else
     echo "🚀 Container '$CONTAINER_NAME' is not running. Starting it..."
     cd $HOME/apps/budget_tracker
-    docker run --rm -it \
-        --name $CONTAINER_NAME \
-        -v "$PWD":/app \
-        -w /app \
-        -e TZ=Asia/Singapore \
-        -e ENV=$ENVIRONMENT \
-        python:3.11 \
-        bash -c "pip install --no-cache-dir -r requirements.txt && python -m bot.bot"
+    docker compose up bot-$ENVIRONMENT
 fi

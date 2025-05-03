@@ -1,0 +1,22 @@
+services:
+  bot-dev:
+    image: python:3.11
+    container_name: budget_tracker_bot_dev
+    environment:
+      - ENV=dev
+      - TZ=Asia/Singapore
+    volumes:
+      - .:/app
+    working_dir: /app
+    command: bash -c "pip install -r requirements.txt && python -m bot.bot"
+
+  bot-prod:
+    image: python:3.11
+    container_name: budget_tracker_bot_prod
+    environment:
+      - ENV=prod
+      - TZ=Asia/Singapore
+    volumes:
+      - .:/app
+    working_dir: /app
+    command: bash -c "pip install -r requirements.txt && python -m bot.bot"
