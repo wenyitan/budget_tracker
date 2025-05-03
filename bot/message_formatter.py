@@ -6,5 +6,5 @@ def format_breakdown_message(breakdown):
         amount = cat['amount']
         text += f"*{category}*: ${amount}\n"
         total += amount
-    text += f"*Total*: ${total}"
+    text += f"*Total*: ${total:.2f}"
     return text
