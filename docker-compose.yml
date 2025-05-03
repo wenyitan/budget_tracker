@@ -1,6 +1,6 @@
 services:
   bot-dev:
-    image: python:3.11
+    image: budget_tracker:dev
     container_name: budget_tracker_bot_dev
     environment:
       - ENV=dev
@@ -11,7 +11,7 @@ services:
     command: bash -c "pip install -r requirements.txt && python -m bot.bot"
 
   bot-prod:
-    image: python:3.11
+    image: budget_tracker:prod
     container_name: budget_tracker_bot_prod
     environment:
       - ENV=prod
