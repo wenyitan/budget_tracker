@@ -20,3 +20,17 @@ services:
       - .:/app
     working_dir: /app
     command: bash -c "pip install -r requirements.txt && python -m bot.bot"
+
+  api-dev:
+    image: budget_tracker_dev:api
+    container_name: budget_tracker_api_dev
+    ports:
+      - "5000:5000"
+    environment:
+      - ENV=dev
+      - FLASK_ENV=development
+    volumes: 
+      - .:/app
+    working_dir: /app
+    command: bash -c "pip install -r api/requirements.txt && python -m api.app"
+    restart: unless-stopped
