@@ -31,7 +31,7 @@ def start(message):
 def log(message):
     from_user = message.from_user
     chat = message.chat
-    logger.info(f"bot_logger: /start called by {from_user.first_name}")
+    logger.info(f"bot_logger: /log called by {from_user.first_name}")
     if from_user.id in ALLOWED_USERS.keys():
         text = "How much was spent?"
         markup = types.ReplyKeyboardRemove()
