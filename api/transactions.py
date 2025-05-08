@@ -1,5 +1,5 @@
 from flask import Flask, Blueprint
-from bot.database import Database 
+from database.database import Database 
 
 db = Database()
 

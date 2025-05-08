@@ -1,5 +1,4 @@
 from flask import Flask, abort
-from bot.database import Database 
 from api.transactions import transactions_bp
 
 app = Flask(__name__)
