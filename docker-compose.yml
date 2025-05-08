@@ -29,6 +29,8 @@ services:
     environment:
       - ENV=dev
       - FLASK_ENV=development
+      - TZ=Asia/Singapore
+      - APP=api
     volumes: 
       - .:/app
     working_dir: /app
