@@ -1,8 +1,5 @@
-from flask import Flask, abort
-from api.transactions import transactions_bp
-
-app = Flask(__name__)
-app.register_blueprint(transactions_bp, url_prefix='/api/v1/transactions/')
+from api.app_factory import create_app
 
 if __name__ == "__main__":
+    app = create_app()
     app.run(debug=True, host="0.0.0.0")
