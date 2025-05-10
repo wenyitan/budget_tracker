@@ -2,7 +2,7 @@
 
 ENVIRONMENT=${1:-prod}
 
-CONTAINER_NAME="budget_tracker_$ENVIRONMENT"
+CONTAINER_NAME="budget_tracker_bot_$ENVIRONMENT"
 
 # Helper function to get the container ID
 get_container_id() {
