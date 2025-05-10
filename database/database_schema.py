@@ -18,4 +18,12 @@ create_categories_table_query = f"""
     );
 """    
 
-create_table_queries = [create_categories_table_query, create_transaction_table_query]
+create_user_table_query = f"""
+    CREATE TABLE IF NOT EXISTS users (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        username TEXT UNIQUE NOT NULL,
+        password_hash TEXT NOT NULL
+    );
+"""
+
+create_table_queries = [create_categories_table_query, create_transaction_table_query, create_user_table_query]
