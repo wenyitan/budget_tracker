@@ -8,7 +8,6 @@ def transactions_bp(db):
     @jwt_required()
     def get_all_transactions():
         current_user = get_jwt_identity()  # Get the current user's identity
-        print("Current user:", current_user)
         return db.fetch_all("select * from transactions;")
 
     @transactions_bp.get("/<id>")
