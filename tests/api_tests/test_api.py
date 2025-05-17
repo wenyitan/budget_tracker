@@ -22,9 +22,10 @@ class TestApiFlow:
         })
         response_body = response.get_json()
         print("")
-        print("Response:", response_body)
+        print("API Response:", response_body)
         print("Asserting response status code == 201")
         assert response.status_code == 201
+        print("=======================================================")
 
     def test_register_using_same_username(self, client):
         response = client.post("/api/v1/authentication/register", json={
@@ -33,12 +34,13 @@ class TestApiFlow:
         })
         response_body = response.get_json()
         print("")
-        print("Response:", response_body)
+        print("API Response:", response_body)
         print("Asserting response status code == 409")
         assert response.status_code == 409
         expected_error_msg = 'Username already exists'
         print(f"Asserting response body error: {expected_error_msg}")
         assert response_body["error"] == expected_error_msg
+        print("=======================================================")
 
     def test_generate_token(self, client):
         headers = generate_basic_auth_headers(test_username, test_password)
@@ -52,6 +54,7 @@ class TestApiFlow:
         print("Asserting 'token' is a key in response body")
         assert 'token' in response_body.keys()
         TestApiFlow.test_variables['token'] = response_body['token']
+        print("=======================================================")
 
     def test_add_transaction(self, client):
         headers = generate_token_header(TestApiFlow.test_variables['token'])
@@ -73,6 +76,7 @@ class TestApiFlow:
         assert response_body["transaction"]["description"] == test_description
         print(f"Asserting response body category_id == {test_category_id}")
         assert response_body["transaction"]["category_id"] == test_category_id
+        print("=======================================================")
 
     def test_get_all_transactions(self, client):
         headers = generate_token_header(TestApiFlow.test_variables['token'])
@@ -85,6 +89,7 @@ class TestApiFlow:
         transaction_ids = list(map(lambda transaction:transaction['id'], response_body))
         transaction_ids.sort()
         TestApiFlow.test_variables['transaction_ids'] = transaction_ids
+        print("=======================================================")
 
     def test_get_transaction_by_id(self, client):
         headers = generate_token_header(TestApiFlow.test_variables['token'])
@@ -97,6 +102,7 @@ class TestApiFlow:
         assert response.status_code == 200
         print(f"Asserting transaction id == {id}")
         assert response_body['id'] == id
+        print("=======================================================")
 
     def test_get_transaction_by_id_not_found(self, client):
         headers = generate_token_header(TestApiFlow.test_variables['token'])
@@ -107,6 +113,7 @@ class TestApiFlow:
         print("Response: ", response_body)
         print("Asserting response status code == 404")
         assert response.status_code == 404
+        print("=======================================================")
 
     def test_delete_user(self, client):
         headers = generate_basic_auth_headers(test_username, test_password)
@@ -116,6 +123,7 @@ class TestApiFlow:
         print("Response: ", response_body)
         print("Asserting response status code == 200")
         assert response.status_code == 200
+        print("=======================================================")
 
     def test_delete_user_again(self, client):
         headers = generate_basic_auth_headers(test_username, test_password)
@@ -128,3 +136,4 @@ class TestApiFlow:
         expected_error_msg = 'Unauthorised access'
         print(f"Asserting response body error: {expected_error_msg}")
         assert response_body["error"] == expected_error_msg
+        print("=======================================================")
