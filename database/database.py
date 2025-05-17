@@ -7,7 +7,7 @@ def dict_factory(cursor, row):
     fields = [column[0] for column in cursor.description]
     return {key: value for key, value in zip(fields, row)}
 
-db_path="bot.db" if env == "prod" else f"bot_{env}.db"
+db_path="bot.db" if env == "prod" else f"bot_dev.db"
 logger.info(f"Database path: {db_path}")
 
 class Database:
