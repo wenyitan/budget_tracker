@@ -1,5 +1,5 @@
 import logging as logger
-from config.config import env, app
+from config.env_config import env, app
 
 log_filename = f'{app}.log' if env == "prod" else f'{app}_{env}.log'
 

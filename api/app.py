@@ -1,5 +1,5 @@
 from api.app_factory import create_app
-from config.config import env
+from config.env_config import env
 
 if __name__ == "__main__":
     app = create_app()

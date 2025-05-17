@@ -3,7 +3,7 @@ from flask import Flask
 from api.authentication.authentication import authentication_bp
 from api.transactions import transactions_bp
 from flask_jwt_extended import JWTManager
-from config.config import JWT_SECRET_KEY
+from config.secrets import JWT_SECRET_KEY
 from datetime import timedelta
 
 def create_app():

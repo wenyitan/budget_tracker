@@ -1,7 +1,8 @@
 import telebot
 from telebot import types
 import datetime
-from config.config import BOT_TOKEN, ALLOWED_USERS, DATE_FORMAT
+from config.secrets import BOT_TOKEN, ALLOWED_USERS
+from config.bot_config import DATE_FORMAT
 from bot.utils import months_day_map
 from bot.transaction import Transaction
 from bot.budget_manager import BudgetManager

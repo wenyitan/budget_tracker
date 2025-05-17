@@ -1,5 +1,5 @@
 from api.app_factory import create_app
-from tests.test_config import test_username, test_password
+from config.env_config import test_username, test_password
 from tests.utils import generate_basic_auth_headers, generate_token_header
 import pytest
 

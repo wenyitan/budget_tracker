@@ -1,14 +1,10 @@
 from database.database import Database
 from bot.transaction import Transaction
 from config.logging_config import logger
-try:
-    from config.config import DATE_FORMAT
-except ModuleNotFoundError:
-    import os
-    DATE_FORMAT = os.getenv("DATE_FORMAT")
+from config.bot_config import DATE_FORMAT
 from bot.utils import months_day_map
+from config.secrets import ALLOWED_USERS
 import datetime
-from config.config import ALLOWED_USERS
 
 class BudgetManager():
     def __init__(self):

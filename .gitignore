@@ -28,5 +28,5 @@ yarn-debug.log*
 yarn-error.log*
 
 config.py
-*test_config.py
 *.log
+*secrets.py

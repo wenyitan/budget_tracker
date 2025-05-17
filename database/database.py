@@ -1,7 +1,7 @@
 import sqlite3
 from database.database_schema import create_table_queries
 from config.logging_config import logger
-from config.config import env
+from config.env_config import env
 
 def dict_factory(cursor, row):
     fields = [column[0] for column in cursor.description]

@@ -3,7 +3,7 @@ from flask_httpauth import HTTPBasicAuth
 from api.authentication.authentication_helper import AuthenticationHelper
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_jwt_extended import create_access_token, jwt_required
-from config.config import env
+from config.env_config import env
 
 def authentication_bp(db):
     authentication_helper = AuthenticationHelper(db)
