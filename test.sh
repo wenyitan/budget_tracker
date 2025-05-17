@@ -6,6 +6,6 @@ docker run --rm \
     -e PYTHONPATH=/app \
     -e DATE_FORMAT=%d-%b-%Y \
     -e PYTHONUNBUFFERED=1 \
-    -e ENV=testing \
+    -e ENV=test \
     python:3.11 \
     bash -c "pip install --no-cache-dir -r /app/tests/requirements_test.txt && pytest -vvv --capture=tee-sys"
