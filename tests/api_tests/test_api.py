@@ -63,16 +63,16 @@ class TestApiFlow:
         print("Response: ", response_body)
         print("Asserting response status code == 201")
         assert response.status_code == 201
-        print(f"Asserting response amount == {test_amount}")
-        assert response.amount == test_amount
-        print(f"Asserting response person == {test_person}")
-        assert response.person == test_person
-        print(f"Asserting response date == {test_date}")
-        assert response.date == test_date
-        print(f"Asserting response description == {test_description}")
-        assert response.description == test_description
-        print(f"Asserting response category_id == {test_category_id}")
-        assert response.category_id == test_category_id
+        print(f"Asserting response body amount == {test_amount}")
+        assert response_body["transaction"]["amount"] == test_amount
+        print(f"Asserting response body person == {test_person}")
+        assert response_body["transaction"]["person"] == test_person
+        print(f"Asserting response body date == {test_date}")
+        assert response_body["transaction"]["date"] == test_date
+        print(f"Asserting response body description == {test_description}")
+        assert response_body["transaction"]["description"] == test_description
+        print(f"Asserting response body category_id == {test_category_id}")
+        assert response_body["transaction"]["category_id"] == test_category_id
 
     def test_get_all_transactions(self, client):
         headers = generate_token_header(TestApiFlow.test_variables['token'])
