@@ -25,10 +25,26 @@ services:
     image: budget_tracker_dev:api
     container_name: budget_tracker_api_dev
     ports:
-      - "5000:5000"
+      - "4000:4000"
     environment:
       - ENV=dev
       - FLASK_ENV=development
+      - TZ=Asia/Singapore
+      - APP=api
+    volumes: 
+      - .:/app
+    working_dir: /app
+    command: bash -c "pip install -r api/requirements.txt && python -m api.app"
+    restart: unless-stopped
+
+  api-prod:
+    image: budget_tracker_prod:api
+    container_name: budget_tracker_api_prod
+    ports:
+      - "5000:5000"
+    environment:
+      - ENV=prod
+      - FLASK_ENV=production
       - TZ=Asia/Singapore
       - APP=api
     volumes: 

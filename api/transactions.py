@@ -1,4 +1,4 @@
-from flask import Blueprint
+from flask import Blueprint, abort
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
 def transactions_bp(db):

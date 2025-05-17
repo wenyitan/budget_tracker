@@ -16,3 +16,9 @@ class AuthenticationHelper:
     def get_user_by_username(self, username):
         query = "select * from users where username=?"
         return self.db.fetch_one(query, (username,))
+
+    def delete_user_by_username(self, username):
+        query = "delete from users where username=?"
+        self.db.execute(query, (username,))
+        last_row_id = self.db.cursor.lastrowid
+        return last_row_id
