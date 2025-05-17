@@ -9,7 +9,10 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-
+    env:
+      TEST_ENV: github-actions
+      JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
+      ALLOWED_USERS: ${{ SECRETS.ALLOWED_USERS }}
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
