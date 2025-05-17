@@ -1,9 +1,8 @@
 from database.database import Database
 from bot.transaction import Transaction
 from config.logging_config import logger
-from config.bot_config import DATE_FORMAT
+from config.bot_config import DATE_FORMAT, ALLOWED_USERS
 from bot.utils import months_day_map
-from config.secrets import ALLOWED_USERS
 import datetime
 
 class BudgetManager():
@@ -61,29 +60,24 @@ class BudgetManager():
     #         return self.db.fetch_all(query, (date_string, person))
         
     def get_current_months_breakdown_by_id(self, id):
-        try:
-            person = ALLOWED_USERS[str(id)]
-            print(person)
-            results = {}
-            all_transactions = self.get_current_months_transactions()
-            all_transactions = [ transaction for transaction in all_transactions if transaction['person'] == person or transaction['shared'] ]
-            shared = 0
-            for transaction in all_transactions:
-                category = transaction['category']
-                amount = transaction['amount']
-                amount = amount/2 if transaction['shared'] else amount
-                if transaction['shared']:
-                    shared += amount 
-                if category not in results.keys():
-                    results[category] = amount
-                else:
-                    results[category] += amount
-            results['Total'] = sum(results.values())
-            results['Shared'] = shared
-            return results
-        except Exception as e:
-            print(e)
-
+        person = ALLOWED_USERS[str(id)]
+        results = {}
+        all_transactions = self.get_current_months_transactions()
+        all_transactions = [ transaction for transaction in all_transactions if transaction['person'] == person or transaction['shared'] ]
+        shared = 0
+        for transaction in all_transactions:
+            category = transaction['category']
+            amount = transaction['amount']
+            amount = amount/2 if transaction['shared'] else amount
+            if transaction['shared']:
+                shared += amount 
+            if category not in results.keys():
+                results[category] = amount
+            else:
+                results[category] += amount
+        results['Total'] = sum(results.values())
+        results['Shared'] = shared
+        return results
     
     def get_all_transactions(self):
         query = 'select * from transactions;'
