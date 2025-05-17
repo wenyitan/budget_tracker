@@ -2,6 +2,7 @@ from api.app_factory import create_app
 from config.env_config import test_username, test_password
 from tests.utils import generate_basic_auth_headers, generate_token_header
 import pytest
+from bot.transaction import Transaction
 
 app = create_app()
 
@@ -51,6 +52,27 @@ class TestApiFlow:
         print("Asserting 'token' is a key in response body")
         assert 'token' in response_body.keys()
         TestApiFlow.test_variables['token'] = response_body['token']
+
+    def test_add_transaction(self, client):
+        headers = generate_token_header(TestApiFlow.test_variables['token'])
+        test_amount, test_person, test_date, test_description, test_category_id = 1.23, "testUser", "18-May-2025", "Bubble tea", 1
+        transaction = Transaction(amount=test_amount, person=test_person, date=test_date, description=test_description, category_id=test_category_id)
+        response = client.post("/api/v1/transactions/", headers=headers, json=transaction.__dict__)
+        response_body = response.get_json()
+        print("")
+        print("Response: ", response_body)
+        print("Asserting response status code == 201")
+        assert response.status_code == 201
+        print(f"Asserting response amount == {test_amount}")
+        assert response.amount == test_amount
+        print(f"Asserting response person == {test_person}")
+        assert response.person == test_person
+        print(f"Asserting response date == {test_date}")
+        assert response.date == test_date
+        print(f"Asserting response description == {test_description}")
+        assert response.description == test_description
+        print(f"Asserting response category_id == {test_category_id}")
+        assert response.category_id == test_category_id
 
     def test_get_all_transactions(self, client):
         headers = generate_token_header(TestApiFlow.test_variables['token'])
