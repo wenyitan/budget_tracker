@@ -20,15 +20,18 @@ jobs:
           MONGO_INITDB_DATABASE: test_db
 
     env:
+      ENV: test
       TEST_ENV: github-actions
       JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
       ALLOWED_USERS: ${{ SECRETS.ALLOWED_USERS }}
       MONGO_URI: mongodb://root:test_password@localhost:27017
       MONGO_DB: test_db
+      DATE_FORMAT: "%d-%b-%Y"
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
 
     - name: Run tests using docker
-      run:
-        ./test.sh
+      run: |
+        pip install -r $PWD/tests/requirements_test.txt
+        pytest -vvv --capture=tee-sys
