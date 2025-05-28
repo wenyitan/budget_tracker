@@ -48,8 +48,9 @@ def authentication_bp(db):
     @auth.login_required
     def delete_user():
         user = auth.current_user()
-        deleted_user = authentication_helper.delete_user_by_username(user["username"])
-        return {"message": f"Success, user with id {deleted_user} has been deleted", "status_code": 200}, 200
+        username = user["username"]
+        deleted_user = authentication_helper.delete_user_by_username(username)
+        return {"message": f"Success, user with username {username} has been deleted", "status_code": 200}, 200
 
 
     return authentication_bp

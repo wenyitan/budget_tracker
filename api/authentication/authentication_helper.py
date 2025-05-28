@@ -1,24 +1,24 @@
 class AuthenticationHelper:
     def __init__(self, db):
         self.db = db
+        self.users_collection = self.db.get_collection("users")
 
     def get_all_usernames(self):
-        query = "select username from users;"
-        results = self.db.fetch_all(query)
+        results = self.users_collection.find({})
         return results
 
     def add_user(self, username, password_hash):
-        query = "insert into users (username, password_hash) values (?,?)"
-        self.db.execute(query, (username, password_hash))
-        last_row_id = self.db.cursor.lastrowid
+        result = self.users_collection.insert_one({
+            "username": username,
+            "password_hash": password_hash
+        })
+        last_row_id = result.inserted_id
         return last_row_id
 
     def get_user_by_username(self, username):
-        query = "select * from users where username=?"
-        return self.db.fetch_one(query, (username,))
+        result = self.users_collection.find_one({"username": username})
+        return result
 
     def delete_user_by_username(self, username):
-        query = "delete from users where username=?"
-        self.db.execute(query, (username,))
-        last_row_id = self.db.cursor.lastrowid
-        return last_row_id
+        result = self.users_collection.delete_one({"username": username})
+        return result.deleted_count
