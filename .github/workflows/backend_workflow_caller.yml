@@ -27,6 +27,7 @@ jobs:
       MONGO_URI: mongodb://root:test_password@localhost:27017
       MONGO_DB: test_db
       DATE_FORMAT: "%d-%b-%Y"
+      PYTHONPATH: ${{ github.workspace }}
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
