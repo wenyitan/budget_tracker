@@ -3,6 +3,7 @@ from config.env_config import test_username, test_password
 from tests.utils import generate_basic_auth_headers, generate_token_header
 import pytest
 from bot.transaction import Transaction
+from bson import ObjectId
 
 app = create_app()
 
@@ -58,8 +59,8 @@ class TestApiFlow:
 
     def test_add_transaction(self, client):
         headers = generate_token_header(TestApiFlow.test_variables['token'])
-        test_amount, test_person, test_date, test_description, test_category_id = 1.23, "testUser", "18-May-2025", "Bubble tea", 1
-        transaction = Transaction(amount=test_amount, person=test_person, date=test_date, description=test_description, category_id=test_category_id)
+        test_amount, test_person, test_date, test_description, test_category = 1.23, "testUser", "18-May-2025", "Bubble tea", "Dining out"
+        transaction = Transaction(amount=test_amount, person=test_person, date=test_date, description=test_description, category=test_category, shared=True)
         response = client.post("/api/v1/transactions/", headers=headers, json=transaction.__dict__)
         response_body = response.get_json()
         print("")
@@ -74,8 +75,10 @@ class TestApiFlow:
         assert response_body["transaction"]["date"] == test_date
         print(f"Asserting response body description == {test_description}")
         assert response_body["transaction"]["description"] == test_description
-        print(f"Asserting response body category_id == {test_category_id}")
-        assert response_body["transaction"]["category_id"] == test_category_id
+        print(f"Asserting response body category == {test_category}")
+        assert response_body["transaction"]["category"] == test_category
+        print(f"Asserting response body shared == {True}")
+        assert response_body["transaction"]["shared"] == True
         print("=======================================================")
 
     def test_get_all_transactions(self, client):
@@ -86,7 +89,7 @@ class TestApiFlow:
         print("Response: ", response_body)
         print("Asserting response status code == 200")
         assert response.status_code == 200
-        transaction_ids = list(map(lambda transaction:transaction['id'], response_body))
+        transaction_ids = list(map(lambda transaction:transaction['_id'], response_body))
         transaction_ids.sort()
         TestApiFlow.test_variables['transaction_ids'] = transaction_ids
         print("=======================================================")
@@ -100,13 +103,13 @@ class TestApiFlow:
         print("Response: ", response_body)
         print("Asserting response status code == 200")
         assert response.status_code == 200
-        print(f"Asserting transaction id == {id}")
-        assert response_body['id'] == id
+        print(f"Asserting transaction _id == {id}")
+        assert response_body['_id'] == id
         print("=======================================================")
 
     def test_get_transaction_by_id_not_found(self, client):
         headers = generate_token_header(TestApiFlow.test_variables['token'])
-        id = TestApiFlow.test_variables['transaction_ids'][-1] + 1
+        id = str(ObjectId())
         response = client.get(f"/api/v1/transactions/{id}", headers=headers)
         response_body = response.get_json()
         print("")

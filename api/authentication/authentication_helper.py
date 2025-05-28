@@ -1,3 +1,5 @@
+from flask import jsonify
+
 class AuthenticationHelper:
     def __init__(self, db):
         self.db = db
@@ -5,7 +7,7 @@ class AuthenticationHelper:
 
     def get_all_usernames(self):
         results = self.users_collection.find({})
-        return results
+        return list(results)
 
     def add_user(self, username, password_hash):
         result = self.users_collection.insert_one({
@@ -17,6 +19,7 @@ class AuthenticationHelper:
 
     def get_user_by_username(self, username):
         result = self.users_collection.find_one({"username": username})
+        print(result)
         return result
 
     def delete_user_by_username(self, username):
