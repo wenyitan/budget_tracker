@@ -5,19 +5,20 @@ on:
   push:
     branches: [main, feature/mongodb_migration]
 
-services:
-  mongodb:
-    image: mongo:5.0
-    ports: 
-      - 27017:27017
-    env:
-      MONGO_INITDB_ROOT_USERNAME=root
-      MONGO_INITDB_ROOT_PASSWORD=test_password
-      MONGO_INITDB_DATABASE=test_db
-
 jobs:
   run-tests:
     runs-on: ubuntu-latest
+
+    services:
+      mongodb:
+        image: mongo:5.0
+        ports: 
+          - 27017:27017
+        env:
+          MONGO_INITDB_ROOT_USERNAME: root
+          MONGO_INITDB_ROOT_PASSWORD: test_password
+          MONGO_INITDB_DATABASE: test_db
+
     env:
       TEST_ENV: github-actions
       JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
