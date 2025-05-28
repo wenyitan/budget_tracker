@@ -23,7 +23,7 @@ jobs:
       TEST_ENV: github-actions
       JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
       ALLOWED_USERS: ${{ SECRETS.ALLOWED_USERS }}
-      MONGO_URI: mongodb://root:test_password@mongodb:27017
+      MONGO_URI: mongodb://root:test_password@localhost:27017
       MONGO_DB: test_db
     steps:
     - name: Checkout code
