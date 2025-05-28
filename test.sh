@@ -10,5 +10,6 @@ docker run --rm \
     ${TEST_ENV:+-e TEST_ENV="$TEST_ENV"} \
     ${JWT_SECRET_KEY:+-e JWT_SECRET_KEY="$JWT_SECRET_KEY"} \
     ${ALLOWED_USERS:+-e ALLOWED_USERS="$ALLOWED_USERS"} \
+    --network wen-network \
     python:3.11 \
     bash -c "pip install --no-cache-dir -r /app/tests/requirements_test.txt && pytest -vvv --capture=tee-sys"

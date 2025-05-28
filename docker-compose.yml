@@ -8,6 +8,8 @@ services:
     volumes:
       - .:/app
     working_dir: /app
+    networks:
+      - wen-network
     command: bash -c "pip install -r requirements.txt && python -m bot.bot"
 
   bot-prod:
@@ -19,6 +21,8 @@ services:
     volumes:
       - .:/app
     working_dir: /app
+    networks:
+      - wen-network
     command: bash -c "pip install -r requirements.txt && python -m bot.bot"
 
   api-dev:
@@ -36,6 +40,8 @@ services:
     working_dir: /app
     command: bash -c "pip install -r api/requirements.txt && python -m api.app"
     restart: unless-stopped
+    networks:
+      - wen-network
 
   api-prod:
     image: budget_tracker_prod:api
@@ -52,3 +58,9 @@ services:
     working_dir: /app
     command: bash -c "pip install -r api/requirements.txt && python -m api.app"
     restart: unless-stopped
+    networks:
+      - wen-network
+
+networks:
+  wen-network:
+    external: true
