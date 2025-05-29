@@ -4,6 +4,8 @@ from tests.utils import generate_basic_auth_headers, generate_token_header
 import pytest
 from bot.transaction import Transaction
 from bson import ObjectId
+from datetime import datetime
+from config.bot_config import DATE_FORMAT
 
 app = create_app()
 
@@ -59,7 +61,7 @@ class TestApiFlow:
 
     def test_add_transaction(self, client):
         headers = generate_token_header(TestApiFlow.test_variables['token'])
-        test_amount, test_person, test_date, test_description, test_category = 1.23, "testUser", "18-May-2025", "Bubble tea", "Dining out"
+        test_amount, test_person, test_date, test_description, test_category = 1.23, "testUser", datetime.now().strftime(DATE_FORMAT), "Bubble tea", "Dining out"
         transaction = Transaction(amount=test_amount, person=test_person, date=test_date, description=test_description, category=test_category, shared=True)
         response = client.post("/api/v1/transactions/", headers=headers, json=transaction.__dict__)
         response_body = response.get_json()
@@ -79,7 +81,23 @@ class TestApiFlow:
         assert response_body["transaction"]["category"] == test_category
         print(f"Asserting response body shared == {True}")
         assert response_body["transaction"]["shared"] == True
+        inserted_id = response_body['transaction']['_id']
+        TestApiFlow.test_variables['inserted_id'] = inserted_id
         print("=======================================================")
+
+    def test_delete_transaction_by_id(self, client):
+        headers = generate_token_header(TestApiFlow.test_variables['token'])
+        id = TestApiFlow.test_variables['inserted_id']
+        response = client.delete(f"/api/v1/transactions/{id}", headers=headers)
+        response_body = response.get_json()
+        print("")
+        print("Response: ", response_body)
+        print("Asserting response status code == 200")
+        assert response.status_code == 200
+        print("Asserting response body message == 'Success'")
+        assert response_body['message'] == "Success"
+        print("Asserting response body deleted_count == 1")
+        assert response_body['deleted_count'] == 1
 
     def test_get_all_transactions(self, client):
         headers = generate_token_header(TestApiFlow.test_variables['token'])
