@@ -1,6 +1,7 @@
 from flask import Blueprint, abort, request
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from bson import ObjectId
+from bson import ObjectId 
+from bson.errors import InvalidId
 
 def transactions_bp(db):
     transactions_bp = Blueprint('transactions', __name__)
@@ -32,11 +33,14 @@ def transactions_bp(db):
     @transactions_bp.delete("/<id>")
     @jwt_required()
     def delete_transaction_by_id(id):
+        try:
+            to_delete = ObjectId(id)
+        except InvalidId:
+            return {"error": "ID not in required format", "status_code": 400}, 400
         result = transactions_collection.delete_one({"_id": ObjectId(id)})
-        print(result)
         deleted_count = result.deleted_count
         if deleted_count == 1:
-            return {"message": "Success", "status_code": 200, "deleted_count": 1}, 200
+            return {"message": "Success", "status_code": 200, "deleted_count": deleted_count}, 200
         else:
-            return {"error": "Something went wrong"}
+            return {"error": "No documents deleted. Please check the id.", "status_code": 404, "deleted_count": deleted_count}, 404
     return transactions_bp
