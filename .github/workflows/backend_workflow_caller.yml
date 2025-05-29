@@ -1,4 +1,4 @@
-name: Python Backend CI
+name: Python Backend CT and CI
 
 on:
   workflow_dispatch:  # Manual trigger only
@@ -28,11 +28,13 @@ jobs:
       MONGO_DB: test_db
       DATE_FORMAT: "%d-%b-%Y"
       PYTHONPATH: ${{ github.workspace }}
+      TZ: Asia/Singapore
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
 
-    - name: Run tests using docker
+    - name: Run tests 
       run: |
         pip install -r $PWD/tests/requirements_test.txt
         pytest -vvv --capture=tee-sys
