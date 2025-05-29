@@ -19,7 +19,6 @@ class AuthenticationHelper:
 
     def get_user_by_username(self, username):
         result = self.users_collection.find_one({"username": username})
-        print(result)
         return result
 
     def delete_user_by_username(self, username):
