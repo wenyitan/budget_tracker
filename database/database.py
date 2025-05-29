@@ -10,7 +10,7 @@ class Database:
         self.collections = {
             "transactions": db[f"transactions_{env.lower()}"],
             "users": db[f"users_{env.lower()}"],
-            "categories ": db[f"categories_{env.lower()}"],
+            "categories": db[f"categories_{env.lower()}"],
         }
 
     def get_collection(self, collection_name):
