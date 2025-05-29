@@ -99,6 +99,20 @@ class TestApiFlow:
         print("Asserting response body deleted_count == 1")
         assert response_body['deleted_count'] == 1
 
+    def test_delete_transaction_by_id_again(self, client):
+        headers = generate_token_header(TestApiFlow.test_variables['token'])
+        id = TestApiFlow.test_variables['inserted_id']
+        response = client.delete(f"/api/v1/transactions/{id}", headers=headers)
+        response_body = response.get_json()
+        print("")
+        print("Response: ", response_body)
+        print("Asserting response status code == 404")
+        assert response.status_code == 404
+        print("Asserting response body error == 'Failed'")
+        assert response_body['error'] == "Failed"
+        print("Asserting response body deleted_count == 0")
+        assert response_body['deleted_count'] == 0
+
     def test_get_all_transactions(self, client):
         headers = generate_token_header(TestApiFlow.test_variables['token'])
         response = client.get("/api/v1/transactions/", headers=headers)

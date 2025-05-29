@@ -4,17 +4,18 @@ from bson import ObjectId
 
 def transactions_bp(db):
     transactions_bp = Blueprint('transactions', __name__)
+    transactions_collection = db.get_collection("transactions")
 
     @transactions_bp.get("/")
     @jwt_required()
     def get_all_transactions():
-        results = db.get_collection("transactions").find({})
+        results = transactions_collection.find({})
         return list(results)
 
     @transactions_bp.get("/<id>")
     @jwt_required()
     def get_transaction_by_id(id):
-        transaction = db.get_collection("transactions").find_one({"_id": ObjectId(id)})
+        transaction = transactions_collection.find_one({"_id": ObjectId(id)})
         if transaction:
             return transaction
         else:
@@ -24,8 +25,18 @@ def transactions_bp(db):
     @jwt_required()
     def add_transaction():
         transaction = request.json
-        result = db.get_collection("transactions").insert_one(transaction)
+        result = transactions_collection.insert_one(transaction)
         last_row_id = str(result.inserted_id)
         return {"message": "success", "status_code": 201, "transaction": get_transaction_by_id(last_row_id)}, 201
-    
+
+    @transactions_bp.delete("/<id>")
+    @jwt_required()
+    def delete_transaction_by_id(id):
+        result = transactions_collection.delete_one({"_id": ObjectId(id)})
+        print(result)
+        deleted_count = result.deleted_count
+        if deleted_count == 1:
+            return {"message": "Success", "status_code": 200, "deleted_count": 1}, 200
+        else:
+            return {"error": "Something went wrong"}
     return transactions_bp
