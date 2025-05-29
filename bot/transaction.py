@@ -1,6 +1,5 @@
 class Transaction():
-    def __init__(self, amount, person="", date="", description="", shared=None, id=None, category=None):
-        self.id = id
+    def __init__(self, amount, person="", date="", description="", shared=False, category=""):
         self.amount = amount
         self.person = person
         self.date = date

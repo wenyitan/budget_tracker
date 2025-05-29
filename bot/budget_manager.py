@@ -4,51 +4,51 @@ from config.logging_config import logger
 from config.bot_config import DATE_FORMAT, ALLOWED_USERS
 from bot.utils import months_day_map
 import datetime
+from bson import ObjectId
 
 class BudgetManager():
     def __init__(self):
         self.db = Database()
+        self.transactions_collection = self.db.get_collection("transactions")
+        self.categories_collection = self.db.get_collection("categories")
 
     def get_all_categories(self):
-        query = f"select * from categories;"
-        return self.db.fetch_all(query=query)
+        results = list(self.categories_collection.find({}))
+        return results
     
     def add_new_category(self, category):
-        query = f"insert into categories (category) values (?)"
-        self.db.execute(query, (category,))
-        last_row_id = self.db.cursor.lastrowid
+        result = self.categories_collection.insert_one({"name": category})
+        last_row_id = result.inserted_id
         logger.info(f"database_logger - categories: {self.get_category_by_id(last_row_id)}" )
         return last_row_id
     
-    def get_category_by_id(self, id):
-        query = "select category from categories where id=?"
-        return self.db.fetch_one(query, (id,))
+    def get_category_by_id(self, id: str):
+        result = self.categories_collection.find_one({"_id": ObjectId(id)})
+        return result
     
     def get_id_by_category(self, category):
-        query = "select id from categories where category=?"
-        return self.db.fetch_one(query, (category,))
+        result = self.categories_collection.find_one({"name": category})
+        return result
     
-    def delete_category_by_name(self, category):
-        query = "delete from categories where category=?"
-        return self.db.execute(query, (category,))
+    def delete_category_by_name(self, category) -> None:
+        deleted = self.categories_collection.delete_one({"name": category})
     
     def save_transaction(self, transaction: Transaction):
-        query = "insert into transactions (amount, person, date, description, shared, category_id) values (?,?,?,?,?,?)"
-        self.db.execute(query, transaction.get_query_placeholder())
-        last_row_id = self.db.cursor.lastrowid
+        result = self.transactions_collection.insert_one(transaction.__dict__)
+        last_row_id = result.inserted_id
         logger.info(f"database_logger - transaction: {self.get_transaction_by_id(last_row_id)}" )
         return last_row_id
     
-    def get_transaction_by_id(self, id):
-        query = "select * from transactions where id=?"
-        return self.db.fetch_one(query, (id,))
+    def get_transaction_by_id(self, id: str):
+        result = self.transactions_collection.find_one({"_id": ObjectId(id)})
+        return result
 
     def get_current_months_transactions(self):
         now = datetime.datetime.now()
-        month_year_date_format = '-'.join(DATE_FORMAT.split("-")[1:]) 
-        now_string = now.strftime(month_year_date_format)
-        query = f"select t.id, t.amount, t.person, t.date, t.description, t.shared, c.category from transactions as t left join categories as c on t.category_id = c.id where t.date like '%{now_string}' order by t.date"
-        return self.db.fetch_all(query)
+        month_year_date_format = '-'.join(DATE_FORMAT.split("-")[1:]) # %b-%Y
+        now_string = now.strftime(month_year_date_format) # e.g. May-2025
+        results = list(self.transactions_collection.find({"date": {"$regex": f"{now_string}$"}}))
+        return results
     
     # def get_breakdown_by_month_and_year_and_id(self, month, year, id):
     #     if month not in months_day_map.keys():
@@ -80,12 +80,10 @@ class BudgetManager():
         return results
     
     def get_all_transactions(self):
-        query = 'select * from transactions;'
-        return self.db.fetch_all(query)
+        results = self.transactions_collection.find({})
+        return list(results)
     
-    def delete_transaction_by_id(self, id):
-        query = 'delete from transactions where id=?'
-        self.db.execute(query, (id,))
-        return self.db.cursor.lastrowid
+    def delete_transaction_by_id(self, id: str) -> None:
+        self.transactions_collection.delete_one({"_id": ObjectId(id)})
 
 ### "select t.id, t.amount, t.person, t.date, t.description, t.shared, c.category from transactions as t left join categories as c on t.category_id = c.id"

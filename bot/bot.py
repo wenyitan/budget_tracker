@@ -177,7 +177,7 @@ def handle_category_response_prompt_date(message, **kwargs):
         sent_message = bot.send_message(message.chat.id, text=text)
         bot.register_next_step_handler(message=sent_message, callback=handle_add_new_category_prompt_date, transaction=transaction, categories=categories)
     else:
-        transaction.category_id = bm.get_id_by_category(answer)['id']
+        transaction.category_id = bm.get_id_by_category(answer)['_id']
         text = "Roger that! Was it spent today?"
         markup = types.ReplyKeyboardMarkup(one_time_keyboard=True)
         markup.add("Yes", "No", row_width=2)
