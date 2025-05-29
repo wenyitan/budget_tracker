@@ -85,6 +85,43 @@ class TestApiFlow:
         TestApiFlow.test_variables['inserted_id'] = inserted_id
         print("=======================================================")
 
+    def test_get_all_transactions(self, client):
+        headers = generate_token_header(TestApiFlow.test_variables['token'])
+        response = client.get("/api/v1/transactions/", headers=headers)
+        response_body = response.get_json()
+        print("")
+        print("Response: ", response_body)
+        print("Asserting response status code == 200")
+        assert response.status_code == 200
+        transaction_ids = list(map(lambda transaction:transaction['_id'], response_body))
+        transaction_ids.sort()
+        TestApiFlow.test_variables['transaction_ids'] = transaction_ids
+        print("=======================================================")
+
+    def test_get_transaction_by_id(self, client):
+        headers = generate_token_header(TestApiFlow.test_variables['token'])
+        id = TestApiFlow.test_variables['transaction_ids'][-1]
+        response = client.get(f"/api/v1/transactions/{id}", headers=headers)
+        response_body = response.get_json()
+        print("")
+        print("Response: ", response_body)
+        print("Asserting response status code == 200")
+        assert response.status_code == 200
+        print(f"Asserting transaction _id == {id}")
+        assert response_body['_id'] == id
+        print("=======================================================")
+
+    def test_get_transaction_by_id_not_found(self, client):
+        headers = generate_token_header(TestApiFlow.test_variables['token'])
+        id = str(ObjectId())
+        response = client.get(f"/api/v1/transactions/{id}", headers=headers)
+        response_body = response.get_json()
+        print("")
+        print("Response: ", response_body)
+        print("Asserting response status code == 404")
+        assert response.status_code == 404
+        print("=======================================================")
+
     def test_delete_transaction_by_id(self, client):
         headers = generate_token_header(TestApiFlow.test_variables['token'])
         id = TestApiFlow.test_variables['inserted_id']
@@ -124,43 +161,6 @@ class TestApiFlow:
         assert response.status_code == 400
         print("Asserting response body error == 'ID not in required format'")
         assert response_body['error'] == "ID not in required format"
-
-    def test_get_all_transactions(self, client):
-        headers = generate_token_header(TestApiFlow.test_variables['token'])
-        response = client.get("/api/v1/transactions/", headers=headers)
-        response_body = response.get_json()
-        print("")
-        print("Response: ", response_body)
-        print("Asserting response status code == 200")
-        assert response.status_code == 200
-        transaction_ids = list(map(lambda transaction:transaction['_id'], response_body))
-        transaction_ids.sort()
-        TestApiFlow.test_variables['transaction_ids'] = transaction_ids
-        print("=======================================================")
-
-    def test_get_transaction_by_id(self, client):
-        headers = generate_token_header(TestApiFlow.test_variables['token'])
-        id = TestApiFlow.test_variables['transaction_ids'][-1]
-        response = client.get(f"/api/v1/transactions/{id}", headers=headers)
-        response_body = response.get_json()
-        print("")
-        print("Response: ", response_body)
-        print("Asserting response status code == 200")
-        assert response.status_code == 200
-        print(f"Asserting transaction _id == {id}")
-        assert response_body['_id'] == id
-        print("=======================================================")
-
-    def test_get_transaction_by_id_not_found(self, client):
-        headers = generate_token_header(TestApiFlow.test_variables['token'])
-        id = str(ObjectId())
-        response = client.get(f"/api/v1/transactions/{id}", headers=headers)
-        response_body = response.get_json()
-        print("")
-        print("Response: ", response_body)
-        print("Asserting response status code == 404")
-        assert response.status_code == 404
-        print("=======================================================")
 
     def test_delete_user(self, client):
         headers = generate_basic_auth_headers(test_username, test_password)
