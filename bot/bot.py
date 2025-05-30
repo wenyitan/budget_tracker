@@ -135,7 +135,7 @@ def handle_comments_prompt_consolidate(message, **kwargs):
     text = f"""Ok. Please check your transaction:
         Amount: ${transaction.amount:.2f}
         Person: {transaction.person}
-        Category: {bm.get_category_by_id(transaction.category_id)["category"]}
+        Category: {transaction.category}
         Date: {transaction.date}
         Description: {transaction.description}
         Shared: {"Yes" if transaction.shared else "No"}
@@ -163,7 +163,7 @@ def handle_shared_yes_no_prompt_category(message, **kwargs):
     text = "Sure! Which category does this expense belong to?"
     categories = bm.get_all_categories()
     markup = types.ReplyKeyboardMarkup(one_time_keyboard=True)
-    markup.add(*[category['category'] for category in categories], row_width=2)
+    markup.add(*[category['name'] for category in categories], row_width=2)
     markup.add("Add new category")
     sent_message = bot.send_message(message.chat.id, text=text, reply_markup=markup)
     bot.register_next_step_handler(message=sent_message, callback=handle_category_response_prompt_date, transaction=transaction, categories=categories)
@@ -177,7 +177,7 @@ def handle_category_response_prompt_date(message, **kwargs):
         sent_message = bot.send_message(message.chat.id, text=text)
         bot.register_next_step_handler(message=sent_message, callback=handle_add_new_category_prompt_date, transaction=transaction, categories=categories)
     else:
-        transaction.category_id = bm.get_id_by_category(answer)['_id']
+        transaction.category = answer
         text = "Roger that! Was it spent today?"
         markup = types.ReplyKeyboardMarkup(one_time_keyboard=True)
         markup.add("Yes", "No", row_width=2)
@@ -188,13 +188,14 @@ def handle_add_new_category_prompt_date(message, **kwargs):
     new_category = message.text
     transaction = kwargs['transaction']
     categories = kwargs['categories']
-    categories_list = [category['category'] for category in kwargs['categories']]
+    categories_list = [category['name'] for category in kwargs['categories']]
     if new_category in categories_list:
         text = "This category already exists la. What you trying to do? Please enter a new category."
         sent_message = bot.send_message(message.chat.id, text=text)
         bot.register_next_step_handler(message=sent_message, callback=handle_add_new_category_prompt_date, transaction=transaction, categories=categories)
     else:
-        transaction.category_id = bm.add_new_category(new_category)
+        bm.add_new_category(new_category)
+        transaction.category = new_category
         text = f"Done! I have also added '{new_category}' to the list of categories that can be chosen.\nDid the transaction happen today?"
         markup = types.ReplyKeyboardMarkup(one_time_keyboard=True)
         markup.add("Yes", "No", row_width=2)
