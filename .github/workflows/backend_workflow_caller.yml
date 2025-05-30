@@ -38,3 +38,16 @@ jobs:
       run: |
         pip install -r $PWD/tests/requirements_test.txt
         pytest -vvv --capture=tee-sys
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    needs: run-tests
+    steps:
+    - name: Connect to server using SSH
+      uses: appleboy/ssh-action@v0.1.7
+      with:
+        host: ${{ secrets.SERVER_IP }}
+        username: ${{ secrets.SERVER_USER }}
+        key: ${{ secrets.SERVER_SSH_KEY }}
+        script: |
+          echo "SSH to Pi successful"
+          ls -lrt
