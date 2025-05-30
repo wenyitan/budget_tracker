@@ -1,0 +1,13 @@
+__pycache__/
+*.pyc
+.env
+.git
+.github/
+Dockerfile
+docker-compose.yml
+tests/
+*.sh
+*.db
+.vscode/
+*.swp
+.DS_Store

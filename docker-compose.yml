@@ -1,32 +1,41 @@
 services:
   bot-dev:
-    image: budget_tracker:dev
+    build:
+      context: .
+      dockerfile: bot/Dockerfile
+    image: budget_tracker:bot-dev
     container_name: budget_tracker_bot_dev
     environment:
       - ENV=dev
       - TZ=Asia/Singapore
     volumes:
       - .:/app
+      - ./logs:/app/logs
     working_dir: /app
     networks:
       - wen-network
-    command: bash -c "pip install -r requirements.txt && python -m bot.bot"
 
   bot-prod:
-    image: budget_tracker:prod
+    build:
+      context: .
+      dockerfile: bot/Dockerfile
+    image: budget_tracker:bot-prod
     container_name: budget_tracker_bot_prod
     environment:
       - ENV=prod
       - TZ=Asia/Singapore
     volumes:
       - .:/app
+      - ./logs:/app/logs
     working_dir: /app
     networks:
       - wen-network
-    command: bash -c "pip install -r requirements.txt && python -m bot.bot"
 
   api-dev:
-    image: budget_tracker_dev:api
+    build:
+      context: .
+      dockerfile: api/Dockerfile
+    image: budget_tracker:api-dev
     container_name: budget_tracker_api_dev
     ports:
       - "4000:4000"
@@ -37,14 +46,17 @@ services:
       - APP=api
     volumes: 
       - .:/app
+      - ./logs:/app/logs
     working_dir: /app
-    command: bash -c "pip install -r api/requirements.txt && python -m api.app"
     restart: unless-stopped
     networks:
       - wen-network
 
   api-prod:
-    image: budget_tracker_prod:api
+    build:
+      context: .
+      dockerfile: api/Dockerfile
+    image: budget_tracker:api-prod
     container_name: budget_tracker_api_prod
     ports:
       - "5000:5000"
@@ -55,8 +67,8 @@ services:
       - APP=api
     volumes: 
       - .:/app
+      - ./logs:/app/logs
     working_dir: /app
-    command: bash -c "pip install -r api/requirements.txt && python -m api.app"
     restart: unless-stopped
     networks:
       - wen-network
