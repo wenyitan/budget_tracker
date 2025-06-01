@@ -13,7 +13,7 @@ jobs:
       mongodb:
         image: mongo:5.0
         ports: 
-          - 27017:27017
+          - 27018:27018
         env:
           MONGO_INITDB_ROOT_USERNAME: root
           MONGO_INITDB_ROOT_PASSWORD: test_password
@@ -24,7 +24,7 @@ jobs:
       TEST_ENV: github-actions
       JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
       ALLOWED_USERS: ${{ SECRETS.ALLOWED_USERS }}
-      MONGO_URI: mongodb://root:test_password@localhost:27017
+      MONGO_URI: mongodb://root:test_password@localhost:27018
       MONGO_DB: test_db
       DATE_FORMAT: "%d-%b-%Y"
       PYTHONPATH: ${{ github.workspace }}
