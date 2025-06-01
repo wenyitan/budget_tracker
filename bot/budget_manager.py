@@ -4,6 +4,7 @@ from config.logging_config import logger
 from config.bot_config import DATE_FORMAT, ALLOWED_USERS
 from bot.utils import months_day_map
 import datetime
+from database.aggregates import get_aggregate_for_breakdown_by_month_and_person
 from bson import ObjectId
 
 class BudgetManager():
@@ -53,6 +54,10 @@ class BudgetManager():
         now_string = now.strftime(month_year_date_format) # e.g. May-2025
         results = self.get_transactions_by_month(now_string)
         return results
+
+    def get_breakdown_by_month_and_person(self, month, person):
+        breakdown = self.transactions_collection.aggregate(get_aggregate_for_breakdown_by_month_and_person(month=month, person=person))
+        return list(breakdown)[0]
         
     def get_current_months_breakdown_by_id(self, id):
         person = ALLOWED_USERS[str(id)]
