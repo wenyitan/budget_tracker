@@ -15,7 +15,7 @@ bm = BudgetManager()
 bot.set_my_commands([
     types.BotCommand("/start", "To receive starting instructions"),
     types.BotCommand("/log", "To start logging transactions"),
-    types.BotCommand("/list_months_transactions", "To list the transactions of the month"),
+    # types.BotCommand("/list_months_transactions", "To list the transactions of the month"),
     types.BotCommand("/breakdown_by_month", "To get a breakdown of money spent on each category")
 ])
 
@@ -202,9 +202,9 @@ def handle_add_new_category_prompt_date(message, **kwargs):
         sent_message = bot.send_message(message.chat.id, text=text, reply_markup=markup)
         bot.register_next_step_handler(message=sent_message, callback=handle_today_yes_no, transaction=transaction)
 
-@bot.message_handler(commands=['list_months_transactions'])
-def list_transactions_for_month(message):
-    transactions = bm.get_current_months_transactions()
+# @bot.message_handler(commands=['list_months_transactions'])
+# def list_transactions_for_month(message):
+#     transactions = bm.get_current_months_transactions()
     # print(generate_message_table(transactions))
 
 @bot.message_handler(commands=['breakdown_by_month'])
