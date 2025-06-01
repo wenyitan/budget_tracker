@@ -20,8 +20,8 @@ test_data_path = Path(__file__).parent.joinpath("budget_manager_test_data.json")
 @pytest.fixture(scope="session")
 def set_up_and_tear_down():
     test_data = json.load(open(test_data_path, "r"))
+    print("Inserting into db test data from ", test_data_path)
     y = bm.transactions_collection.insert_many(test_data)
-    print(y.inserted_ids)
     yield
     print("Clearing transactions collection for test db")
     x = bm.transactions_collection.delete_many({})
