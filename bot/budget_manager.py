@@ -43,21 +43,16 @@ class BudgetManager():
         result = self.transactions_collection.find_one({"_id": ObjectId(id)})
         return result
 
+    def get_transactions_by_month(self, month_str): # %b-%Y eg. May-2025
+        results = list(self.transactions_collection.find({"date": {"$regex": f"{month_str}$"}}))
+        return results
+
     def get_current_months_transactions(self):
         now = datetime.datetime.now()
         month_year_date_format = '-'.join(DATE_FORMAT.split("-")[1:]) # %b-%Y
         now_string = now.strftime(month_year_date_format) # e.g. May-2025
-        results = list(self.transactions_collection.find({"date": {"$regex": f"{now_string}$"}}))
+        results = self.get_transactions_by_month(now_string)
         return results
-    
-    # def get_breakdown_by_month_and_year_and_id(self, month, year, id):
-    #     if month not in months_day_map.keys():
-    #         return None
-    #     else:
-    #         person = ALLOWED_USERS[id]
-    #         date_string = f"%{month}-{str(year)}"
-    #         query = "select sum(t.amount) as amount, c.category from transactions as t left join categories as c on t.category_id = c.id where t.date like ? and person = ? group by c.category;"
-    #         return self.db.fetch_all(query, (date_string, person))
         
     def get_current_months_breakdown_by_id(self, id):
         person = ALLOWED_USERS[str(id)]

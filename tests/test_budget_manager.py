@@ -5,6 +5,8 @@ from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from config.bot_config import DATE_FORMAT
 import pytest
+from pathlib import Path
+import json
 
 bm = BudgetManager()
 
@@ -12,13 +14,25 @@ context = {}
 
 now = datetime.now().strftime(DATE_FORMAT)
 
+test_data_path = Path(__file__).parent.joinpath("test_data.json")
+
+@pytest.fixture(scope="session")
+def set_up_and_tear_down():
+    test_data = json.load(open(test_data_path, "r"))
+    y = bm.transactions_collection.insert_many(test_data)
+    print(y.inserted_ids)
+    yield
+    print("Clearing transactions collection for test db")
+    x = bm.transactions_collection.delete_many({})
+    print(x.deleted_count, "records deleted")
+
 @pytest.fixture
 def format_test():
     print("")
     yield
     print("\n=======================================================")
 
-def test_add_new_category_and_get_category_and_id(format_test):
+def test_add_new_category_and_get_category_and_id(format_test, set_up_and_tear_down):
     print("Adding new category: 'test_placeholder_category'")
     inserted_id = bm.add_new_category("test_placeholder_category")
     print("Asserting type of inserted_id == ObjectId")
@@ -61,27 +75,18 @@ def test_save_transaction_and_get_transaction_by_id(format_test):
     print("Asserting category of retrieved transaction == 'Tithing'")
     assert retrieved_transaction['category'] == "Tithing"
 
-def test_get_current_months_transaction(format_test):
-    now = datetime.now()
-    month_year_date_format = '-'.join(DATE_FORMAT.split("-")[1:]) # %b-%Y
-    now_string = now.strftime(month_year_date_format) # e.g. May-2025
-    one_month_ago = datetime.now() - relativedelta(months=1)
-    one_month_ago_string = one_month_ago.strftime(DATE_FORMAT)
-    print("Adding three transactions from the previous month:")
-    for i in range(3):
-        transaction = Transaction(amount=12.4 + i, person="Rando", date=one_month_ago_string, description=f"test_transaction_description_{i}", shared=False, category="Tithing")
-        print(transaction.__dict__)
-        bm.save_transaction(transaction)
-    results = bm.get_current_months_transactions()
+def test_get_transactions_by_month(format_test):
+    month_str = "May-2025"
+    results = bm.get_transactions_by_month(month_str)
     all_transactions = bm.get_all_transactions()
-    all_months_transactions = [transaction for transaction in all_transactions if transaction['date'].endswith(now_string)]
+    all_months_transactions = [transaction for transaction in all_transactions if transaction['date'].endswith(month_str)]
     expected_length = len(all_months_transactions)
     print(f"Asserting length of list retrieved by get_current_months_transactions() == {expected_length}")
     assert expected_length == len(results)
     print(f"Asserting length of list retrieved by get_current_months_transactions() != number of all transactions: {len(all_transactions)}")
     assert expected_length != len(all_transactions)
 
-def test_get_all_transactions_and_delete_transaction_by_id(format_test):
+def test_get_all_transactions_and_delete_transaction_by_id(format_test, set_up_and_tear_down):
     transactions = bm.get_all_transactions()
     print("Asserting length of list of retrieved transaction != 0")
     assert len(transactions) != 0

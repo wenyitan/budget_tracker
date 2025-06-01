@@ -12,6 +12,7 @@ class Database:
             "users": db[f"users_{env.lower()}"],
             "categories": db[f"categories_{env.lower()}"],
         }
+        print(f"Database connection initialised for {env.lower()}")
 
     def get_collection(self, collection_name):
         return self.collections[collection_name]

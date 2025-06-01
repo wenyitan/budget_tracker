@@ -1,0 +1,83 @@
+[
+    {
+        "amount": 124.50,
+        "person": "test_person_1",
+        "date": "14-May-2025",
+        "description": "test_description_1",
+        "category": "Utilities",
+        "shared": true
+    },
+    {
+        "amount": 38,
+        "person": "test_person_1",
+        "date": "22-May-2025",
+        "description": "test_description_2",
+        "category": "Dining out (Restaurant)",
+        "shared": true
+    },
+    {
+        "amount": 150,
+        "person": "test_person_1",
+        "date": "21-May-2025",
+        "description": "test_description_3",
+        "category": "Dining out (Restaurant)",
+        "shared": false
+    },
+    {
+        "amount": 12,
+        "person": "test_person_1",
+        "date": "02-May-2025",
+        "description": "test_description_4",
+        "category": "Misc.",
+        "shared": true
+    },
+    {
+        "amount": 23,
+        "person": "test_person_2",
+        "date": "25-May-2025",
+        "description": "",
+        "category": "Dining out (Hawker)",
+        "shared": true
+    },
+    {
+        "amount": 6,
+        "person": "test_person_2",
+        "date": "25-May-2025",
+        "description": "test_description_2",
+        "category": "Misc.",
+        "shared": false
+    },
+    {
+        "amount": 210,
+        "person": "test_person_2",
+        "date": "25-May-2025",
+        "description": "ILP May",
+        "category": "Insurance",
+        "shared": false
+    },
+    {
+        "amount": 210,
+        "person": "test_person_2",
+        "date": "25-Apr-2025",
+        "description": "ILP Apr",
+        "category": "Insurance",
+        "shared": false
+    },
+    {
+        "amount": 210,
+        "person": "test_person_2",
+        "date": "25-Mar-2025",
+        "description": "ILP Mar",
+        "category": "Insurance",
+        "shared": false
+    },
+    {
+        "amount": 350,
+        "person": "test_person_1",
+        "date": "02-Mar-2025",
+        "description": "ILP Mar",
+        "category": "Insurance",
+        "shared": false
+    }
+
+]
