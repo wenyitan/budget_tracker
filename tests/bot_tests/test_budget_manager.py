@@ -7,6 +7,7 @@ from config.bot_config import DATE_FORMAT
 import pytest
 from pathlib import Path
 import json
+from tests.bot_tests.budget_manager_breakdown_expected_results import *
 
 bm = BudgetManager()
 
@@ -14,7 +15,7 @@ context = {}
 
 now = datetime.now().strftime(DATE_FORMAT)
 
-test_data_path = Path(__file__).parent.joinpath("test_data.json")
+test_data_path = Path(__file__).parent.joinpath("budget_manager_test_data.json")
 
 @pytest.fixture(scope="session")
 def set_up_and_tear_down():
@@ -86,7 +87,7 @@ def test_get_transactions_by_month(format_test):
     print(f"Asserting length of list retrieved by get_current_months_transactions() != number of all transactions: {len(all_transactions)}")
     assert expected_length != len(all_transactions)
 
-def test_get_all_transactions_and_delete_transaction_by_id(format_test, set_up_and_tear_down):
+def test_get_all_transactions_and_delete_transaction_by_id(format_test):
     transactions = bm.get_all_transactions()
     print("Asserting length of list of retrieved transaction != 0")
     assert len(transactions) != 0
@@ -99,3 +100,22 @@ def test_get_all_transactions_and_delete_transaction_by_id(format_test, set_up_a
     retrieved_transaction = bm.get_transaction_by_id(id)
     print(f"Asserting retrieved transaction of id {id} is None")
     assert retrieved_transaction == None
+
+def test_get_breakdown_by_month_and_person(format_test, set_up_and_tear_down):
+    persons = ["test_person_1", "test_person_2", "test_person_1", "test_person_2", "test_person_1", "test_person_2"]
+    months = ["Mar-2025", "Mar-2025", "Apr-2025", "Apr-2025", "May-2025", "May-2025"]
+    expected_results = [person_1_mar_2025, person_2_mar_2025, person_1_apr_2025, person_2_apr_2025, person_1_may_2025, person_2_may_2025]
+    for person, month, expected_result in zip(persons, months, expected_results):
+        breakdown = bm.get_breakdown_by_month_and_person(person=person, month=month)
+        print(f"\nTesting scenario: Person - {person}, Month - {month}")
+        for i in breakdown['breakdown']:
+            category = i['_id']
+            expected_amount = expected_result[category]
+            print(f"Asserting {category} amount == {expected_amount}")
+            assert i['total'] == expected_amount
+        print(f"Asserting month's total == {expected_result['total']}")
+        assert breakdown['total'] == expected_result['total']
+        print(f"Asserting month's shared total == {expected_result['shared_total']}")
+        assert breakdown['shared_total'] == expected_result['shared_total']
+        print(f"Asserting month's unshared total == {expected_result['unshared_total']}")
+        assert breakdown['unshared_total'] == expected_result['unshared_total']

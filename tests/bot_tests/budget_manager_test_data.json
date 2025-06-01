@@ -72,6 +72,30 @@
         "shared": false
     },
     {
+        "amount": 90,
+        "person": "test_person_2",
+        "date": "05-Apr-2025",
+        "description": "ILP Apr",
+        "category": "Insurance",
+        "shared": false
+    },
+    {
+        "amount": 900,
+        "person": "test_person_2",
+        "date": "05-Apr-2025",
+        "description": "Parents",
+        "category": "Parents",
+        "shared": false
+    },
+    {
+        "amount": 1000,
+        "person": "test_person_2",
+        "date": "05-Apr-2025",
+        "description": "Parents",
+        "category": "Rent",
+        "shared": true
+    },
+    {
         "amount": 350,
         "person": "test_person_1",
         "date": "02-Mar-2025",
