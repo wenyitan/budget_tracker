@@ -56,8 +56,8 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build -t wenyitan/budget_tracker:latest -f bot/Dockerfile .
+          docker build -t wenyitan/budget_tracker_bot:latest -f bot/Dockerfile .
 
       - name: Push Docker image
         run: |
-          docker push wenyitan/budget_tracker:latest
+          docker push wenyitan/budget_tracker_bot:latest
