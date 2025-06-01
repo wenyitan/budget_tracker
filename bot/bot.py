@@ -213,7 +213,7 @@ def get_breakdown_of_month(message):
     id = from_user.id
     if str(id) in ALLOWED_USERS.keys():
         breakdown = bm.get_current_months_breakdown_by_id(id)
-        text = "Ok. Here is the breakdown for the current month:\n"
+        text = "Ok. Here is the breakdown for the current month!!!!:\n"
         text += message_formatter.format_breakdown_message(breakdown)
         bot.send_message(message.chat.id, text=text, parse_mode="Markdown")
     else:

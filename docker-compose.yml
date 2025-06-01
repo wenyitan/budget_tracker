@@ -16,17 +16,14 @@ services:
       - wen-network
 
   bot-prod:
-    build:
-      context: .
-      dockerfile: bot/Dockerfile
-    image: budget_tracker:bot-prod
+    image: wenyitan/budget_tracker_bot:latest
     container_name: budget_tracker_bot_prod
     environment:
       - ENV=prod
       - TZ=Asia/Singapore
     volumes:
-      - .:/app
       - ./logs:/app/logs
+      - ./config/secrets.py:/app/config/secrets.py:ro
     working_dir: /app
     networks:
       - wen-network
