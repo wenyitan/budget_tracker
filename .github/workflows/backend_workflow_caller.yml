@@ -36,7 +36,10 @@ jobs:
 
     - name: Run tests 
       run: |
-        pip install -r $PWD/tests/requirements_test.txt
+        python3 -m venv .venv
+        source .venv/bin/activate
+        pip install --upgrade pip
+        pip install -r tests/requirements_test.txt
         pytest -vvv --capture=tee-sys
   build-and-deploy:
     runs-on: self-hosted
